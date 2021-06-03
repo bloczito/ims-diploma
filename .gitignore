@@ -1,0 +1,10 @@
+.idea/
+.idea/workspace.xml
+/out/
+/target/
+/logs/
+.git123/
+.git2/
+
+ims_diploma.iml
+.DS_Store
