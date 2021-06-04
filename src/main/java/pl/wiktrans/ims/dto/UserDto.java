@@ -4,10 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import pl.wiktrans.ims.model.Role;
 import pl.wiktrans.ims.model.User;
 
-import java.util.Collection;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Data
@@ -34,7 +33,7 @@ public class UserDto {
     private Boolean hidden;
     private Boolean enabled;
 
-    private Collection<RoleDto> roles;
+    private Set<RoleDto> roles;
 
     public static UserDto of(User user) {
         return UserDto.builder()
@@ -51,8 +50,8 @@ public class UserDto {
                 .enabled(user.getEnabled())
                 .roles(user.getRoles()
                         .stream()
-                        .map(RoleDto::toRoleDto)
-                        .collect(Collectors.toList())
+                        .map(RoleDto::of)
+                        .collect(Collectors.toSet())
                 )
                 .build();
     }

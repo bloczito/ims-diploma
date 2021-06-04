@@ -2,6 +2,7 @@ package pl.wiktrans.ims.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import pl.wiktrans.ims.dto.RoleDto;
 import pl.wiktrans.ims.model.Role;
 import pl.wiktrans.ims.repository.RoleRepository;
 
@@ -15,7 +16,7 @@ public class RoleService {
     private RoleRepository roleRepository;
 
 
-    public Iterable<Role> getAll() { return roleRepository.findAll(); }
+    public List<Role> getAll() { return roleRepository.findAll(); }
 
     public Role getById(Long id) {
         return roleRepository.findById(id)
@@ -29,7 +30,21 @@ public class RoleService {
                 .orElseThrow(() -> new NoSuchElementException("Role " + name + " was not found"));
     }
 
-    public Iterable<Role> getAllByNames(Iterable<String> roleNames) {
+    public List<Role> getAllByNames(Iterable<String> roleNames) {
         return roleRepository.findAllByNameIn(roleNames);
+    }
+
+    public void addNewRole(RoleDto dto) {
+        Role role = new Role();
+        role.setName(dto.getName());
+        role.setInfo(dto.getInfo());
+        roleRepository.save(role);
+    }
+
+    public void updateRole(RoleDto dto) {
+        Role oldRole = getById(dto.getId());
+        oldRole.setName(dto.getName());
+        oldRole.setInfo(dto.getInfo());
+        roleRepository.save(oldRole);
     }
 }
