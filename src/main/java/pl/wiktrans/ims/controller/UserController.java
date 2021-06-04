@@ -1,5 +1,6 @@
 package pl.wiktrans.ims.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import pl.wiktrans.ims.dto.UserDto;
@@ -11,6 +12,7 @@ import pl.wiktrans.ims.service.UserService;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -44,20 +46,26 @@ public class UserController {
     @PostMapping
     public FailableActionResult addNewUser(@RequestBody UserDto userDto) {
         try {
-            userService.addNewUser(userDto);
+            if (userDto.getId() != null) {
+                userService.updateUser(userDto);
+            } else {
+                userService.addNewUser(userDto);
+            }
             return FailableActionResult.success();
         } catch (Exception e) {
+            e.printStackTrace();
+            log.error("Add/edit user error: ", e.getMessage());
             return FailableActionResult.failure(e.getMessage());
         }
     }
 
-    @PostMapping("/{id}")
-    public FailableActionResult updateUser(@RequestBody UserDto userDto) {
-        try {
-            userService.updateUser(userDto);
-            return FailableActionResult.success();
-        } catch (Exception e) {
-            return FailableActionResult.failure(e.getMessage());
-        }
-    }
+//    @PostMapping("/{id}")
+//    public FailableActionResult updateUser(@RequestBody UserDto userDto) {
+//        try {
+//            userService.updateUser(userDto);
+//            return FailableActionResult.success();
+//        } catch (Exception e) {
+//            return FailableActionResult.failure(e.getMessage());
+//        }
+//    }
 }

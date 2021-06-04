@@ -1,6 +1,7 @@
 package pl.wiktrans.ims.loader;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -67,6 +68,10 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 
         createRoleIfNotFound("ROLE_ADMIN", adminPrivileges);
         createRoleIfNotFound("ROLE_USER", Collections.singletonList(readPrivilege));
+        createRoleIfNotFound("ROLE_WORKER", Collections.singletonList(readPrivilege));
+        createRoleIfNotFound("ROLE_SERVICE", Collections.singletonList(readPrivilege));
+        createRoleIfNotFound("ROLE_TESTER", Collections.singletonList(readPrivilege));
+        createRoleIfNotFound("ROLE_TRADER", Collections.singletonList(readPrivilege));
 
         Optional<Role> adminRole = roleRepository.findByName("ROLE_ADMIN");
         Optional<Role> userRole = roleRepository.findByName("ROLE_USER");
@@ -76,7 +81,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         user.setLastName("Test");
         user.setPassword(passwordEncoder.encode("test"));
         user.setEmail("test@test.com");
-        user.setRoles(Arrays.asList(adminRole.get(), userRole.get()));
+        user.setRoles(Sets.newHashSet(adminRole.get(), userRole.get()));
 //        user.setRoles(Collections.singleton(userRole.get()));
         user.setEnabled(true);
         userRepository.save(user);

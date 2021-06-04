@@ -10,6 +10,7 @@ import pl.wiktrans.ims.model.Role;
 import pl.wiktrans.ims.model.User;
 import pl.wiktrans.ims.repository.UserRepository;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -62,14 +63,14 @@ public class UserService {
                 .map(RoleDto::getName)
                 .collect(Collectors.toSet());
 
-        Set<Role> newRoles = (Set<Role>) roleService.getAllByNames(roleNames);
+        List<Role> newRoles = roleService.getAllByNames(roleNames);
 
         Set<Role> roles = oldUser.getRoles();
         roles.clear();
         roles.addAll(newRoles);
         oldUser.setRoles(roles);
 
-
+        userRepository.save(oldUser);
     }
 
     private User createUser(UserDto userDto) {
@@ -79,7 +80,7 @@ public class UserService {
         user.setLastName(userDto.getLastName());
         user.setShortcut(userDto.getShortcut());
         user.setUsername(userDto.getUsername());
-        user.setPassword(userDto.getPassword());
+        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         user.setEmail(userDto.getEmail());
         user.setJob(userDto.getJob());
         user.setActive(userDto.getActive());
@@ -92,8 +93,8 @@ public class UserService {
                 .map(RoleDto::getName)
                 .collect(Collectors.toSet());
 
-        Set<Role> roles = (Set<Role>) roleService.getAllByNames(roleNames);
-        user.setRoles(roles);
+        List<Role> roles = roleService.getAllByNames(roleNames);
+        user.setRoles(new HashSet<>(roles));
 
         return user;
     }

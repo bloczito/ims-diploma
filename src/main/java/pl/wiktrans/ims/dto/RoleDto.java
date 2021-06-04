@@ -18,7 +18,7 @@ public class RoleDto {
     private Boolean hidden;
 
 
-    public static RoleDto toRoleDto(Role role) {
+    public static RoleDto of(Role role) {
         return RoleDto.builder()
                 .id(role.getId())
                 .name(role.getName())
