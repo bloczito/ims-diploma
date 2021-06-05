@@ -91,11 +91,20 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         company.setEmail("asd@asd.asd");
         companyRepository.save(company);
 
+        Address customerAddress = Address.builder()
+                .street("RingerStrasse")
+                .houseNumber("14")
+                .city("Berlin")
+                .postcode("12-123")
+                .country("Niemcy")
+                .build();
+
         Customer customer = new Customer();
         customer.setName("Klient 1");
         customer.setEmail("klient1@asd.pl");
         customer.setNip("1234567890");
         customer.setPhone("147852369");
+        customer.setAddress(customerAddress);
         customerRepository.save(customer);
 
 
@@ -142,8 +151,10 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         Address objectAddress = new Address();
         objectAddress.setCity("Berlin");
         objectAddress.setCountry("Germany");
-        objectAddress.setStreet("Adolf Hitler Strasse");
-        objectAddress.setHouseNumber("2137");
+//        objectAddress.setStreet("Adolf Hitler Strasse");
+        objectAddress.setStreet("Short Strasse");
+        objectAddress.setHouseNumber("12");
+        objectAddress.setApartmentNumber("2");
         objectAddress.setVoivodeship("Monachium");
 
         CustomerObject customerObject = new CustomerObject();
