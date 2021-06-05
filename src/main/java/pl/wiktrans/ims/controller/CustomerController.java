@@ -7,7 +7,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.wiktrans.ims.dto.CustomerDto;
+import pl.wiktrans.ims.dto.OrderDto;
+import pl.wiktrans.ims.exceptions.ElementNotFoundException;
 import pl.wiktrans.ims.misc.FailableActionResult;
+import pl.wiktrans.ims.misc.FailableResource;
 import pl.wiktrans.ims.model.Customer;
 import pl.wiktrans.ims.service.CustomerService;
 
@@ -52,6 +55,28 @@ public class CustomerController {
     @PostMapping
     public FailableActionResult addNewCustomer(@RequestBody CustomerDto customerDto) {
         return customerService.addNewCustomer(customerDto);
+    }
+
+    @GetMapping("/{id}")
+    public FailableResource<CustomerDto> getById(@PathVariable Long id) {
+        try {
+            CustomerDto customerDto = CustomerDto.of(customerService.getById(id));
+            return FailableResource.success(customerDto);
+//        } catch (ElementNotFoundException e) {
+//            return FailableResource.failure(e.getMessage());
+        } catch (Exception e) {
+            return FailableResource.failure(e.getMessage());
+        }
+    }
+
+    @PostMapping("/{id}")
+    public FailableActionResult updateCustomer(@RequestBody CustomerDto customerDto) {
+        try {
+            customerService.updateCustomer(customerDto);
+            return FailableActionResult.success();
+        } catch (Exception e) {
+            return FailableActionResult.failure(e.getMessage());
+        }
     }
 
 }
