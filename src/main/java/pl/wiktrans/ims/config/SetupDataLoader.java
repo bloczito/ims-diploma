@@ -1,4 +1,4 @@
-package pl.wiktrans.ims.loader;
+package pl.wiktrans.ims.config;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -67,6 +67,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         List<Privilege> adminPrivileges = Arrays.asList(readPrivilege, writePrivilege);
 
         createRoleIfNotFound("ROLE_ADMIN", adminPrivileges);
+        createRoleIfNotFound("ROLE_TRADER_SUPERVISOR", Sets.newHashSet(readPrivilege, writePrivilege));
         createRoleIfNotFound("ROLE_USER", Collections.singletonList(readPrivilege));
         createRoleIfNotFound("ROLE_WORKER", Collections.singletonList(readPrivilege));
         createRoleIfNotFound("ROLE_SERVICE", Collections.singletonList(readPrivilege));
@@ -75,13 +76,14 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 
         Optional<Role> adminRole = roleRepository.findByName("ROLE_ADMIN");
         Optional<Role> userRole = roleRepository.findByName("ROLE_USER");
+        Optional<Role> traderSupervisorRole = roleRepository.findByName("ROLE_TRADER_SUPERVISOR");
         User user = new User();
         user.setUsername("test");
         user.setFirstName("Test");
         user.setLastName("Test");
         user.setPassword(passwordEncoder.encode("test"));
         user.setEmail("test@test.com");
-        user.setRoles(Sets.newHashSet(adminRole.get(), userRole.get()));
+        user.setRoles(Sets.newHashSet(adminRole.get(), userRole.get(), traderSupervisorRole.get()));
 //        user.setRoles(Collections.singleton(userRole.get()));
         user.setEnabled(true);
         userRepository.save(user);
@@ -92,11 +94,11 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         companyRepository.save(company);
 
         Address customerAddress = Address.builder()
-                .street("RingerStrasse")
+                .street("Akacjowa")
                 .houseNumber("14")
-                .city("Berlin")
+                .city("Poznań")
                 .postcode("12-123")
-                .country("Niemcy")
+                .country("Polska")
                 .build();
 
         Customer customer = new Customer();
@@ -107,7 +109,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         customer.setAddress(customerAddress);
         customerRepository.save(customer);
 
-
+        loadCustomers();
 
         Order order = new Order();
         order.setOrderNumber("2020/04 BKR");
@@ -117,15 +119,15 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         order.setDeadline(LocalDate.of(2022, 5, 15));
         orderRepository.save(order);
 
-//        for (int i = 0; i < 30; ++i) {
-//            Order order1 = new Order();
-//            order1.setOrderNumber("2020/" + i%12 + " BKR" + i);
-//            order1.setCompany(company);
-//            order1.setOrderDate(LocalDate.now());
-//            order1.setCustomer(customer);
-//            order1.setDeadline(LocalDate.of(2022, i % 12 + 1, (i % 25) + 1));
-//            orderRepository.save(order1);
-//        }
+        for (int i = 0; i < 30; ++i) {
+            Order order1 = new Order();
+            order1.setOrderNumber("2020/" + i%12 + " BKR" + i);
+            order1.setCompany(company);
+            order1.setOrderDate(LocalDate.now());
+            order1.setCustomer(customer);
+            order1.setDeadline(LocalDate.of(2022, i % 12 + 1, (i % 25) + 1));
+            orderRepository.save(order1);
+        }
 
         company.setOrders(Collections.singletonList(order));
         companyRepository.save(company);
@@ -149,21 +151,22 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 
 
         Address objectAddress = new Address();
-        objectAddress.setCity("Berlin");
-        objectAddress.setCountry("Germany");
-//        objectAddress.setStreet("Adolf Hitler Strasse");
-        objectAddress.setStreet("Short Strasse");
+        objectAddress.setCity("Warszawa");
+        objectAddress.setCountry("Polska");
+        objectAddress.setStreet("Sosnowa");
         objectAddress.setHouseNumber("12");
         objectAddress.setApartmentNumber("2");
-        objectAddress.setVoivodeship("Monachium");
+        objectAddress.setVoivodeship("mazowieckie");
 
         CustomerObject customerObject = new CustomerObject();
         customerObject.setCustomer(customer);
-        customerObject.setContactName("Helmut");
-        customerObject.setContactSurname("Szwab");
-        customerObject.setContactTitle("Mr.");
+        customerObject.setContactName("Marek");
+        customerObject.setContactSurname("Nowak");
+        customerObject.setContactTitle("Pan");
         customerObject.setAddress(objectAddress);
         customerObjectService.save(customerObject);
+
+        loadCustomerObjects(customer);
 
         Shipment shipment = new Shipment();
         shipment.setOrder(order);
@@ -176,12 +179,19 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         Optional<MerchOrder> optionalMerchOrder = merchOrderService.getAll().stream().findFirst();
         optionalMerchOrder.ifPresent(merchOrder -> {
             OrderElement orderElement = merchOrder.getOrderElements().get(0);
+            OrderElement orderElement2 = merchOrder.getOrderElements().get(1);
 
             ShipmentElement shipmentElement = new ShipmentElement();
             shipmentElement.setShipment(shipment);
             shipmentElement.setProduct(orderElement.getProduct());
             shipmentElement.setQuantity(orderElement.getQuantity()/2);
             shipmentElementService.save(shipmentElement);
+
+            ShipmentElement shipmentElement2 = new ShipmentElement();
+            shipmentElement2.setShipment(shipment);
+            shipmentElement2.setProduct(orderElement2.getProduct());
+            shipmentElement2.setQuantity(orderElement2.getQuantity()/2);
+            shipmentElementService.save(shipmentElement2);
 
         });
 
@@ -221,6 +231,8 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         product.setName("Łupanka 180");
         product.setHeight(180D);
         product.setWidth(50d);
+        product.setDepth(5d);
+        product.setWeight(10d);
         product.setBasePrice(new BigDecimal(156));
 
         Product product1 = new Product();
@@ -228,6 +240,8 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         product1.setName("Łupanka 90");
         product1.setHeight(90D);
         product1.setWidth(30d);
+        product1.setDepth(3d);
+        product1.setWeight(8d);
         product1.setBasePrice(new BigDecimal(126));
 
         Product product2 = new Product();
@@ -235,13 +249,17 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         product2.setName("Płot 180");
         product2.setHeight(180D);
         product2.setWidth(180d);
+        product2.setDepth(4d);
+        product2.setWeight(5d);
         product2.setBasePrice(new BigDecimal(290));
 
         Product product3 = new Product();
-        product3.setCode(123456L);
+        product3.setCode(162534L);
         product3.setName("Karmik brzoza");
         product3.setHeight(30D);
         product3.setWidth(40d);
+        product3.setDepth(25d);
+        product3.setWeight(2d);
         product3.setBasePrice(new BigDecimal(100));
 
         Product product4 = new Product();
@@ -249,20 +267,26 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         product4.setName("Karmnik drewno");
         product4.setHeight(20D);
         product4.setWidth(20d);
+        product4.setDepth(15d);
+        product4.setWeight(2.5);
         product4.setBasePrice(new BigDecimal(63));
 
         Product product5 = new Product();
         product5.setCode(1297236L);
-        product5.setName("Łopanka mini");
+        product5.setName("Łupanka 30");
         product5.setHeight(30D);
         product5.setWidth(10d);
+        product5.setDepth(5d);
+        product5.setWeight(4d);
         product5.setBasePrice(new BigDecimal(60));
 
         Product product6 = new Product();
-        product6.setCode(123456L);
+        product6.setCode(126543L);
         product6.setName("Hochbet");
         product6.setHeight(40D);
         product6.setWidth(120d);
+        product6.setDepth(5d);
+        product6.setWeight(1.5);
         product6.setBasePrice(new BigDecimal(80));
 
         productsService.save(product);
@@ -300,12 +324,11 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 
         MerchOrder merchOrder2 = new MerchOrder();
         merchOrder2.setOrder(order);
-        merchOrder2.setComment("DUPA DUPA DUPA");
         merchOrder2.setMerchOrderDate(LocalDateTime.now());
         merchOrder2.setOrderElements(new ArrayList<>());
         merchOrderService.save(merchOrder2);
 
-        List<Product> subProducts = allProducts.subList(0, (int) (allProducts.size() / 2));
+        List<Product> subProducts = allProducts.subList(0, allProducts.size() / 2);
         Collections.shuffle(subProducts);
 
         subProducts.forEach(product -> {
@@ -320,6 +343,60 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         });
 
         return Arrays.asList(merchOrder, merchOrder2);
+    }
+
+    public void loadCustomers() {
+        Address customerAddress = Address.builder()
+                .street("Akacjowa")
+                .houseNumber("14")
+                .city("Poznań")
+                .postcode("12-123")
+                .country("Polska")
+                .build();
+
+        for (int i = 0; i < 10; ++i) {
+
+            Customer customer = new Customer();
+            customer.setName("Klient " + (i + 2));
+            customer.setEmail("klient" + (i + 2) + "@poczta.pl");
+            customer.setNip("12345678" + (i +2 ));
+            customer.setPhone("147852369");
+            customer.setAddress(customerAddress);
+            customerRepository.save(customer);
+        }
+    }
+
+    public void loadCustomerObjects(Customer customer) {
+        Address objectAddress = new Address();
+        objectAddress.setCity("Poznań");
+        objectAddress.setCountry("Polska");
+        objectAddress.setStreet("Malinowa");
+        objectAddress.setHouseNumber("13");
+        objectAddress.setVoivodeship("wielkopolskie");
+
+        CustomerObject customerObject = new CustomerObject();
+        customerObject.setCustomer(customer);
+        customerObject.setContactName("Michał");
+        customerObject.setContactSurname("Kowal");
+        customerObject.setContactTitle("Pan");
+        customerObject.setAddress(objectAddress);
+        customerObjectService.save(customerObject);
+
+        Address objectAddress1 = new Address();
+        objectAddress1.setCity("Wrocław");
+        objectAddress1.setCountry("Polska");
+        objectAddress1.setStreet("Koszykowa");
+        objectAddress1.setHouseNumber("78");
+        objectAddress1.setVoivodeship("dolnośląskie");
+
+        CustomerObject customerObject1 = new CustomerObject();
+        customerObject1.setCustomer(customer);
+        customerObject1.setContactName("Adam");
+        customerObject1.setContactSurname("Kwiatkowski");
+        customerObject1.setContactTitle("Pan");
+        customerObject1.setAddress(objectAddress1);
+        customerObjectService.save(customerObject1);
+
     }
 
 

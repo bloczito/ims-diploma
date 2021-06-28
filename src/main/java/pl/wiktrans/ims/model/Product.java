@@ -38,6 +38,8 @@ public class Product {
 
     private BigDecimal basePrice;
 
+    private Boolean deleted = false;
+
 
     @OneToMany(mappedBy = "product")
     private List<SupplyElement> supplyElements;

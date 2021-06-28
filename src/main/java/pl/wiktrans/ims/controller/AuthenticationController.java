@@ -10,8 +10,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import pl.wiktrans.ims.request.AuthenticationRequest;
-import pl.wiktrans.ims.response.AuthenticationResponse;
+import pl.wiktrans.ims.config.AuthenticationRequest;
+import pl.wiktrans.ims.dto.AuthenticationResponse;
 import pl.wiktrans.ims.service.CustomUserDetailsService;
 import pl.wiktrans.ims.util.JwtUtil;
 

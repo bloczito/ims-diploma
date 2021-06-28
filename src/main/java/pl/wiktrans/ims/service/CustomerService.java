@@ -5,7 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import pl.wiktrans.ims.dto.CustomerDto;
-import pl.wiktrans.ims.misc.FailableActionResult;
+import pl.wiktrans.ims.util.FailableActionResult;
 import pl.wiktrans.ims.model.Customer;
 import pl.wiktrans.ims.model.CustomerObject;
 import pl.wiktrans.ims.repository.CustomerRepository;

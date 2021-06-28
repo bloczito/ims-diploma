@@ -1,4 +1,4 @@
-package pl.wiktrans.ims.request;
+package pl.wiktrans.ims.config;
 
 import lombok.Data;
 

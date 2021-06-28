@@ -28,4 +28,5 @@ public class ProductPrice {
     @ManyToOne
     private Order order;
 
+    private Boolean deleted = false;
 }

@@ -1,19 +1,21 @@
 package pl.wiktrans.ims.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 import pl.wiktrans.ims.dto.ProductDto;
-import pl.wiktrans.ims.misc.FailableActionResult;
-import pl.wiktrans.ims.misc.FailableResource;
+import pl.wiktrans.ims.util.FailableActionResult;
+import pl.wiktrans.ims.util.FailableResource;
 import pl.wiktrans.ims.model.Product;
 import pl.wiktrans.ims.service.ProductsService;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RestController
 @RequestMapping("/products")
 public class ProductController {
@@ -64,16 +66,22 @@ public class ProductController {
 
        try {
            return FailableResource.success(
-                   ProductDto.of(productsService.getOne(id))
+                   ProductDto.of(productsService.getById(id))
            );
        } catch (Exception e) {
            return FailableResource.failure(e.getMessage());
        }
     }
 
-    @PostMapping("/{id}")
-    public FailableActionResult updateProduct(@RequestBody ProductDto productDto) {
+    @PostMapping("/{id}/delete")
+    public FailableActionResult updateProduct(@PathVariable Long id) {
+        try {
+            productsService.deleteProduct(id);
+            return FailableActionResult.success();
+        } catch (Exception e) {
+            log.error("Deleting product error: {}", e.getMessage());
+            return FailableActionResult.failure(e.getMessage());
+        }
 
-        return FailableActionResult.success();
     }
 }

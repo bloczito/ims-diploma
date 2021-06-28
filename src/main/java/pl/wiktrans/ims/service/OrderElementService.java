@@ -32,4 +32,15 @@ public class OrderElementService {
         orderElementRepository.saveAll(orderElements);
     }
 
+    public void deleteOrderElementsPermanently(List<OrderElement> orderElements) {
+        orderElementRepository.deleteAll(orderElements);
+    }
+
+    public void deleteOrderElements(List<OrderElement> orderElements) {
+        for (OrderElement orderElement : orderElements) {
+            orderElement.setDeleted(true);
+        }
+        orderElementRepository.saveAll(orderElements);
+    }
+
 }

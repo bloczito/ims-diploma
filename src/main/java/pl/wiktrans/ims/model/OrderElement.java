@@ -26,5 +26,7 @@ public class OrderElement {
     @ManyToOne
     private MerchOrder merchOrder;
 
+    private Boolean deleted = false;
+
 
 }

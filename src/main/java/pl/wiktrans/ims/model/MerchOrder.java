@@ -29,11 +29,10 @@ public class MerchOrder {
     @Column(columnDefinition = "LONGTEXT")
     private String comment;
 
+    private Boolean deleted = false;
+
     @OneToMany(mappedBy = "merchOrder", fetch = FetchType.EAGER)
     private List<OrderElement> orderElements;
-
-
-
 
     @CreatedDate
     @DateTimeFormat(pattern = "yyyy-MM-dd HHH:mm:ss")

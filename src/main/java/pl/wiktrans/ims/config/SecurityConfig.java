@@ -18,9 +18,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import pl.wiktrans.ims.filter.JwtRequestFilter;
-
-import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity

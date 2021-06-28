@@ -4,8 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import pl.wiktrans.ims.dto.RoleDto;
-import pl.wiktrans.ims.misc.FailableActionResult;
-import pl.wiktrans.ims.misc.FailableResource;
+import pl.wiktrans.ims.util.FailableActionResult;
+import pl.wiktrans.ims.util.FailableResource;
 import pl.wiktrans.ims.service.RoleService;
 
 import java.util.List;

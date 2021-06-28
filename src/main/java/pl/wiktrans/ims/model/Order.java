@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Table(name = "customer_order")
+@Table(name = "contract")
 @EntityListeners(AuditingEntityListener.class)
 @Data
 public class Order {
@@ -47,6 +47,8 @@ public class Order {
     @JsonIgnore
     @ManyToOne
     private Company company;
+
+    private Boolean deleted = false;
 
     @JsonIgnore
     @OneToMany(mappedBy = "order")

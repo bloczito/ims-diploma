@@ -23,11 +23,11 @@ public class ProductsService {
     }
 
     public Page<Product> getPage(PageRequest pageRequest) {
-        return productRepository.findAll(pageRequest);
+        return productRepository.findActiveByPage(false, pageRequest);
     }
 
 
-    public Product getOne(Long id) {
+    public Product getById(Long id) {
         return productRepository
                 .findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Product not found with given id = " + id));
@@ -44,6 +44,12 @@ public class ProductsService {
 
     public List<Product> getByQuery(String query) {
         return productRepository.getAllByQuery(query);
+    }
+
+    public void deleteProduct(Long id) {
+        Product product = getById(id);
+        product.setDeleted(true);
+        productRepository.save(product);
     }
 
 }

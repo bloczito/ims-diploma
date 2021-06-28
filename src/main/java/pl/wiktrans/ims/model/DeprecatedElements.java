@@ -18,6 +18,8 @@ public class DeprecatedElements {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    private int amount = 0;
+
     @ManyToOne
     private Product product;
 

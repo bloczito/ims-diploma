@@ -15,9 +15,15 @@ public class MerchOrderService {
     @Autowired
     private MerchOrderRepository merchOrderRepository;
 
+    @Autowired
+    private OrderElementService orderElementService;
+
+    @Autowired
+    private ProductPriceService productPriceService;
+
 
     public List<MerchOrder> getAll() {
-        return merchOrderRepository.findAll();
+        return merchOrderRepository.findAllByDeleted(false);
     }
 
     public MerchOrder getById(Long id) {
@@ -31,4 +37,21 @@ public class MerchOrderService {
     }
 
     public void save(MerchOrder merchOrder) { merchOrderRepository.save(merchOrder); }
+
+    public void deleteMerchOrders(List<MerchOrder> orders) {
+        for (MerchOrder ord : orders) {
+            ord.setDeleted(true);
+            orderElementService.deleteOrderElements(ord.getOrderElements());
+        }
+
+        merchOrderRepository.saveAll(orders);
+    }
+
+    public void deleteMerchOrderPermanently(Long id) {
+        MerchOrder merchOrder = getById(id);
+        Order order = merchOrder.getOrder();
+        orderElementService.deleteOrderElementsPermanently(merchOrder.getOrderElements());
+        merchOrderRepository.delete(merchOrder);
+        productPriceService.updateProductPrices(order);
+    }
 }
