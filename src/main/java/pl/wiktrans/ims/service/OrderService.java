@@ -89,6 +89,7 @@ public class OrderService {
         order.setDeadline(orderDto.getDeadline());
         order.setStatus(orderDto.getStatus());
         order.setPriority(orderDto.getPriority());
+        orderRepository.save(order);
 
         merchOrderService.updateMerchOrders(order, orderDto.getMerchOrders());
         productPriceService.updateAndAddProductPrices(order, orderDto.getProductPrices());
