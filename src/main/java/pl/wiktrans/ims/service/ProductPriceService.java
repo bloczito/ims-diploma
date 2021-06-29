@@ -17,6 +17,9 @@ public class ProductPriceService {
     @Autowired
     private ProductPriceRepository productPriceRepository;
 
+    @Autowired
+    private MerchOrderService merchOrderService;
+
 
     public List<ProductPrice> getAllByOrder(Order order) {
         return productPriceRepository.findAllByOrder(order);
@@ -43,7 +46,7 @@ public class ProductPriceService {
         productPriceRepository.saveAll(productPrices);
     }
 
-    public void updateProductPrices(Order order) {
+    public void updateAndDeleteProductPrices(Order order) {
         Set<Product> orderedProducts = order.getMerchOrders()
                 .stream()
                 .map(MerchOrder::getOrderElements)
@@ -57,5 +60,41 @@ public class ProductPriceService {
                 .collect(Collectors.toList());
 
         productPriceRepository.deleteAll(productPricesToDelete);
+    }
+
+    public void updateAndAddProductPrices(Order order, List<ProductPriceDto> productPriceDtos) {
+        Set<Product> productsWithPrices = order.getProductPrices()
+                .stream()
+                .map(ProductPrice::getProduct)
+                .collect(Collectors.toSet());
+
+        List<MerchOrder> allByOrder = merchOrderService.getAllByOrder(order);
+
+        allByOrder
+                .stream()
+                .map(MerchOrder::getOrderElements)
+                .flatMap(List::stream)
+                .map(OrderElement::getProduct)
+                .collect(Collectors.toSet())
+                .forEach(product -> {
+                    if (!productsWithPrices.contains(product)) {
+                        ProductPrice productPrice = new ProductPrice();
+                        productPrice.setProduct(product);
+                        productPrice.setOrder(order);
+                        productPrice.setPrice(product.getBasePrice());
+                        save(productPrice);
+                    }
+                });
+
+        productPriceDtos.forEach(dto -> {
+            if (dto.getId() != null) {
+                ProductPrice oldProductPrice = getById(dto.getId());
+
+                if (!dto.getPrice().equals(oldProductPrice.getPrice())) {
+                    oldProductPrice.setPrice(dto.getPrice());
+                    save(oldProductPrice);
+                }
+            }
+        });
     }
 }
