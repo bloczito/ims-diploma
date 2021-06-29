@@ -31,6 +31,7 @@ public class Shipment {
     @ManyToOne
     private CustomerObject shipmentObject;
 
+    private Boolean deleted = false;
 
     @OneToMany(mappedBy = "shipment")
     private List<ShipmentElement> shipmentElements;

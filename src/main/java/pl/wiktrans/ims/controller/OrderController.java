@@ -1,18 +1,15 @@
 package pl.wiktrans.ims.controller;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 import pl.wiktrans.ims.dto.OrderDto;
-import pl.wiktrans.ims.misc.FailableActionResult;
-import pl.wiktrans.ims.misc.FailableResource;
+import pl.wiktrans.ims.dto.OrderInitData;
+import pl.wiktrans.ims.util.FailableActionResult;
+import pl.wiktrans.ims.util.FailableResource;
 import pl.wiktrans.ims.model.Order;
 import pl.wiktrans.ims.model.OrderPriority;
 import pl.wiktrans.ims.model.OrderStatus;
@@ -83,15 +80,13 @@ public class OrderController {
 
     }
 
-
-    @Data
-    @Builder
-    @AllArgsConstructor
-    @NoArgsConstructor
-    private static class OrderInitData {
-        private OrderDto order;
-        private List<OrderStatus> statuses;
-        private List<OrderPriority> priorities;
+    @PostMapping("/{id}/delete")
+    public FailableActionResult deleteOrder(@PathVariable Long id) {
+        try {
+            orderService.deleteOrder(id);
+            return FailableActionResult.success();
+        } catch (Exception e) {
+            return FailableActionResult.failure(e.getMessage());
+        }
     }
-
 }

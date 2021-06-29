@@ -1,4 +1,4 @@
-package pl.wiktrans.ims.filter;
+package pl.wiktrans.ims.config;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.SignatureException;

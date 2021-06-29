@@ -2,7 +2,7 @@ package pl.wiktrans.ims.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pl.wiktrans.ims.dto.CustomerDto;
 import pl.wiktrans.ims.dto.OrderDto;
@@ -49,11 +49,11 @@ public class OrderService {
 
 
     public List<Order> getAll() {
-        return (List<Order>) orderRepository.findAll();
+        return orderRepository.findAllByDeleted(false);
     }
 
-    public Page<Order> getPage(PageRequest page) {
-        return orderRepository.findAll(page);
+    public Page<Order> getPage(Pageable page) {
+        return orderRepository.findAllActivePage(false, page);
     }
 
     public Order getById(Long id) {
@@ -115,7 +115,7 @@ public class OrderService {
                             OrderElement orderElement = new OrderElement();
                             orderElement.setMerchOrder(merchOrder);
                             orderElement.setQuantity(elDto.getQuantity());
-                            orderElement.setProduct(productsService.getOne(elDto.getProduct().getId()));
+                            orderElement.setProduct(productsService.getById(elDto.getProduct().getId()));
                             return orderElement;
                         })
                         .collect(Collectors.toList());
@@ -169,7 +169,7 @@ public class OrderService {
                             ShipmentElement shipmentElement = new ShipmentElement();
                             shipmentElement.setShipment(shipment);
                             shipmentElement.setQuantity(elDto.getQuantity());
-                            shipmentElement.setProduct(productsService.getOne(elDto.getProduct().getId()));
+                            shipmentElement.setProduct(productsService.getById(elDto.getProduct().getId()));
                             return shipmentElement;
                         })
                         .collect(Collectors.toList());
@@ -192,7 +192,15 @@ public class OrderService {
                 }
             }
         });
+    }
 
+    public void deleteOrder(Long id) {
+        Order order = getById(id);
+        order.setDeleted(true);
+        orderRepository.save(order);
+        merchOrderService.deleteMerchOrders(order.getMerchOrders());
+        shipmentService.deleteShipments(order.getShipments());
+        productPriceService.deleteProductPrices(order.getProductPrices());
     }
 
 

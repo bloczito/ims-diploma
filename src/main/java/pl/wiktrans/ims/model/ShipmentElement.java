@@ -26,4 +26,6 @@ public class ShipmentElement {
     @ManyToOne
     private Shipment shipment;
 
+    private Boolean deleted = false;
+
 }

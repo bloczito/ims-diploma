@@ -12,5 +12,6 @@ import java.util.List;
 public interface ProductPriceRepository extends JpaRepository<ProductPrice, Long> {
 
     List<ProductPrice> findAllByOrder(Order order);
+    List<ProductPrice> findAllByDeleted(Boolean isDeleted);
 
 }

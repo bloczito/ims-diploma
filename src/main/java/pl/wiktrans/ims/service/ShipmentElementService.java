@@ -29,5 +29,15 @@ public class ShipmentElementService {
 
     public void saveAll(List<ShipmentElement> shipmentElements) { shipmentElementRepository.saveAll(shipmentElements); }
 
+    public void deleteShipmentElements(List<ShipmentElement> shipmentElements) {
+        for (ShipmentElement shipmentElement : shipmentElements) {
+            shipmentElement.setDeleted(true);
+        }
+        shipmentElementRepository.saveAll(shipmentElements);
+    }
+
+    public void deleteShipmentElementsPermanently(List<ShipmentElement> shipmentElements) {
+        shipmentElementRepository.deleteAll(shipmentElements);
+    }
 
 }

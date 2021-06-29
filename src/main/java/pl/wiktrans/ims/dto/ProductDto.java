@@ -58,6 +58,7 @@ public class ProductDto {
         .depth(this.depth)
         .weight(this.weight)
         .basePrice(this.basePrice)
+        .deleted(false)
         .build();
     }
 

@@ -7,10 +7,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.wiktrans.ims.dto.CustomerDto;
-import pl.wiktrans.ims.dto.OrderDto;
-import pl.wiktrans.ims.exceptions.ElementNotFoundException;
-import pl.wiktrans.ims.misc.FailableActionResult;
-import pl.wiktrans.ims.misc.FailableResource;
+import pl.wiktrans.ims.util.FailableActionResult;
+import pl.wiktrans.ims.util.FailableResource;
 import pl.wiktrans.ims.model.Customer;
 import pl.wiktrans.ims.service.CustomerService;
 

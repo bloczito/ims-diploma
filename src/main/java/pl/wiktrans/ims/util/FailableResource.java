@@ -1,4 +1,4 @@
-package pl.wiktrans.ims.misc;
+package pl.wiktrans.ims.util;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

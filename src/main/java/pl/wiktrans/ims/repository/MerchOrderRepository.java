@@ -10,4 +10,5 @@ import java.util.List;
 public interface MerchOrderRepository extends JpaRepository<MerchOrder, Long> {
 
     List<MerchOrder> findAllByOrder(Order order);
+    List<MerchOrder> findAllByDeleted(Boolean isDeleted);
 }
