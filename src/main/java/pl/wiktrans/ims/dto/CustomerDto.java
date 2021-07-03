@@ -40,6 +40,7 @@ public class CustomerDto {
                 .customerObjects(customer
                         .getCustomerObjects()
                         .stream()
+                        .filter(obj -> !obj.getIsDeleted())
                         .map(CustomerObjectDto::of)
                         .collect(Collectors.toList()))
                 .build();

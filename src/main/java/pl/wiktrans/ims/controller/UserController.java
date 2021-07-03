@@ -59,13 +59,13 @@ public class UserController {
         }
     }
 
-//    @PostMapping("/{id}")
-//    public FailableActionResult updateUser(@RequestBody UserDto userDto) {
-//        try {
-//            userService.updateUser(userDto);
-//            return FailableActionResult.success();
-//        } catch (Exception e) {
-//            return FailableActionResult.failure(e.getMessage());
-//        }
-//    }
+    @PostMapping("/{id}/delete")
+    public FailableActionResult updateUser(@PathVariable Long id) {
+        try {
+            userService.deleteById(id);
+            return FailableActionResult.success();
+        } catch (Exception e) {
+            return FailableActionResult.failure(e.getMessage());
+        }
+    }
 }

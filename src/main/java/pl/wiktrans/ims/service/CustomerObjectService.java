@@ -21,7 +21,7 @@ public class CustomerObjectService {
     }
 
     public List<CustomerObject> getAllByCustomer(Customer customer) {
-        return customerObjectRepository.findAllByCustomer(customer);
+        return customerObjectRepository.findAllByCustomerAndIsDeleted(customer, false);
     }
 
     public void save(CustomerObject customerObject) {
@@ -32,5 +32,14 @@ public class CustomerObjectService {
         customerObjectRepository.saveAll(customerObjects);
     }
 
+    public void deleteById(Long id) {
+        CustomerObject customerObject = getById(id);
+        customerObject.setIsDeleted(true);
+        save(customerObject);
+    }
 
+    public void deleteCustomerObjects(List<CustomerObject> customerObjects) {
+        customerObjects.forEach(customerObject -> customerObject.setIsDeleted(true));
+        saveAll(customerObjects);
+    }
 }

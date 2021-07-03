@@ -2,8 +2,10 @@ package pl.wiktrans.ims.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import pl.wiktrans.ims.dto.MerchOrderDto;
 import pl.wiktrans.ims.model.MerchOrder;
 import pl.wiktrans.ims.model.Order;
+import pl.wiktrans.ims.model.OrderElement;
 import pl.wiktrans.ims.repository.MerchOrderRepository;
 
 import java.util.List;
@@ -20,6 +22,9 @@ public class MerchOrderService {
 
     @Autowired
     private ProductPriceService productPriceService;
+
+    @Autowired
+    private ProductsService productsService;
 
 
     public List<MerchOrder> getAll() {
@@ -52,6 +57,28 @@ public class MerchOrderService {
         Order order = merchOrder.getOrder();
         orderElementService.deleteOrderElementsPermanently(merchOrder.getOrderElements());
         merchOrderRepository.delete(merchOrder);
-        productPriceService.updateProductPrices(order);
+        productPriceService.updateAndDeleteProductPrices(order);
+    }
+
+    public void updateMerchOrders(Order order, List<MerchOrderDto> merchOrderDtos) {
+        merchOrderDtos.forEach(dto -> {
+            if (dto.getId() == null) {
+                MerchOrder merchOrder = new MerchOrder();
+                merchOrder.setOrder(order);
+                merchOrder.setComment(dto.getComment());
+                save(merchOrder);
+
+                List<OrderElement> newElements = orderElementService.createOrderElements(merchOrder, dto.getOrderElements());
+
+                orderElementService.saveAll(newElements);
+                merchOrder.setOrderElements(newElements);
+//                save(merchOrder);
+
+            } else {
+                MerchOrder oldMerchOrder = getById(dto.getId());
+                oldMerchOrder.setComment(dto.getComment());
+                save(oldMerchOrder);
+            }
+        });
     }
 }

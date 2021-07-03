@@ -3,6 +3,7 @@ package pl.wiktrans.ims.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pl.wiktrans.ims.dto.CustomerDto;
 import pl.wiktrans.ims.util.FailableActionResult;
@@ -22,12 +23,12 @@ public class CustomerService {
     private CustomerObjectService customerObjectService;
 
     public List<Customer> getAll() {
-        return customerRepository.findAll();
+        return customerRepository.findAllByIsDeleted(false);
     }
 
     public Customer getById(Long id) { return customerRepository.getOne(id); }
 
-    public Page<Customer> getPage(PageRequest pageRequest) { return customerRepository.findAll(pageRequest); }
+    public Page<Customer> getPage(Pageable pageable) { return customerRepository.findActivePage(false, pageable); }
 
     public FailableActionResult addNewCustomer(CustomerDto customerDto) {
         try {
@@ -64,5 +65,12 @@ public class CustomerService {
                 customerObjectService.save(customerObject);
             }
         });
+    }
+
+    public void deleteById(Long id) {
+        Customer customer = getById(id);
+        customer.setIsDeleted(true);
+        customerRepository.save(customer);
+        customerObjectService.deleteCustomerObjects(customer.getCustomerObjects());
     }
 }

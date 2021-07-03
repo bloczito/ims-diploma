@@ -29,6 +29,8 @@ public class CustomerObject {
     @Column(name = "contact_title")
     private String contactTitle;
 
+    private Boolean isDeleted = false;
+
     @ManyToOne
     private Customer customer;
 

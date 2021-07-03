@@ -55,15 +55,16 @@ public class RoleController {
         }
     }
 
-//    @PostMapping("/{id}")
-//    public FailableActionResult updateRole(@RequestBody RoleDto dto) {
-//        try {
-//            roleService.updateRole(dto);
-//            return FailableActionResult.success();
-//        } catch (Exception e) {
-//            return FailableActionResult.failure(e.getMessage());
-//        }
-//    }
+    @PostMapping("/{id}/delete")
+    public FailableActionResult deleteRole(@PathVariable Long id) {
+        try {
+            roleService.deleteById(id);
+            return FailableActionResult.success();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return FailableActionResult.failure(e.getMessage());
+        }
+    }
 
 
 }

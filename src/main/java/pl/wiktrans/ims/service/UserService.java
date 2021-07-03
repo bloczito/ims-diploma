@@ -28,7 +28,7 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public List<User> getAll() { return userRepository.findAll(); }
+    public List<User> getAll() { return userRepository.findAllByHidden(false); }
 
     public User getById(Long id) {
         return userRepository.findById(id)
@@ -97,5 +97,17 @@ public class UserService {
         user.setRoles(new HashSet<>(roles));
 
         return user;
+    }
+
+    public void saveAll(List<User> users) {
+        userRepository.saveAll(users);
+    }
+
+    public void deleteById(Long id) {
+        User user = getById(id);
+        user.setActive(false);
+        user.setEnabled(false);
+        user.setHidden(true);
+        userRepository.save(user);
     }
 }

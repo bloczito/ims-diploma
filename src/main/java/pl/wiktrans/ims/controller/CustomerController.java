@@ -77,4 +77,14 @@ public class CustomerController {
         }
     }
 
+    @PostMapping("/{id}/delete")
+    public FailableActionResult deleteCustomer(@PathVariable Long id) {
+        try {
+            customerService.deleteById(id);
+            return FailableActionResult.success();
+        } catch (Exception e) {
+            return FailableActionResult.failure(e.getMessage());
+        }
+    }
+
 }
