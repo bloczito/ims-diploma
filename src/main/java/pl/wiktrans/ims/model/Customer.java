@@ -35,11 +35,13 @@ public class Customer {
 
     private String email;
 
-    @Column(unique = true)
+//    @Column(unique = true)
     private String nip;
 
     @Embedded
     private Address address;
+
+    Boolean isDeleted = false;
 
     @JsonIgnore
     @OneToMany(mappedBy = "customer")

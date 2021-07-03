@@ -49,9 +49,13 @@ public class OrderController {
     @PostMapping
     public FailableActionResult addNewOrder(@RequestBody OrderDto orderDto) {
 
-        orderService.addNewOrder(orderDto);
+        try {
+            orderService.addNewOrder(orderDto);
+            return FailableActionResult.success();
+        } catch (Exception e) {
+            return FailableActionResult.failure(e.getMessage());
+        }
 
-        return FailableActionResult.success();
     }
 
 

@@ -46,9 +46,9 @@ public class CustomUserDetailsService implements UserDetailsService {
                 user.getUsername(),
                 user.getPassword(),
                 user.getEnabled(),
-                true,
-                true,
-                true,
+                user.getActive(),
+                user.getEnabled(),
+                !user.getHidden(),
                 getAuthorities(user.getRoles())
         );
     }

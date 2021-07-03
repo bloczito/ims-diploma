@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public interface CustomerObjectRepository extends JpaRepository<CustomerObject, Long> {
 
-    List<CustomerObject> findAllByCustomer(Customer customer);
+    List<CustomerObject> findAllByCustomerAndIsDeleted(Customer customer, Boolean isDeleted);
 
 
 }

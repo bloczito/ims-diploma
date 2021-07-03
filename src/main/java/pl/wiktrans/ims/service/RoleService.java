@@ -4,16 +4,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.wiktrans.ims.dto.RoleDto;
 import pl.wiktrans.ims.model.Role;
+import pl.wiktrans.ims.model.User;
 import pl.wiktrans.ims.repository.RoleRepository;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 @Service
 public class RoleService {
 
     @Autowired
     private RoleRepository roleRepository;
+
+    @Autowired
+    private UserService userService;
 
 
     public List<Role> getAll() { return roleRepository.findAll(); }
@@ -46,5 +51,16 @@ public class RoleService {
         oldRole.setName(dto.getName());
         oldRole.setInfo(dto.getInfo());
         roleRepository.save(oldRole);
+    }
+
+    public void deleteById(Long id) {
+        Role role = getById(id);
+        List<User> users = role.getUsers();
+        users.forEach(user -> {
+            Set<Role> roles = user.getRoles();
+            roles.remove(role);
+        });
+        userService.saveAll(users);
+        roleRepository.delete(role);
     }
 }
