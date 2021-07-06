@@ -17,10 +17,10 @@ public class UnauthorizedEntryPoint implements AuthenticationEntryPoint {
                          HttpServletResponse res,
                          AuthenticationException exception) throws IOException, ServletException {
 
-        res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        res.setContentType(MediaType.APPLICATION_JSON_VALUE);
+//        res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//        res.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
-        res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+        res.sendError(HttpServletResponse.SC_UNAUTHORIZED, exception.getMessage());
 
     }
 }

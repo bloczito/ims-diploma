@@ -1,52 +1,52 @@
 package pl.wiktrans.ims.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import pl.wiktrans.ims.config.AuthenticationRequest;
+import org.springframework.web.bind.annotation.RestController;
+import pl.wiktrans.ims.config.jwt.JwtFilter;
+import pl.wiktrans.ims.config.jwt.TokenProvider;
+import pl.wiktrans.ims.dto.AuthenticationRequest;
 import pl.wiktrans.ims.dto.AuthenticationResponse;
-import pl.wiktrans.ims.service.CustomUserDetailsService;
-import pl.wiktrans.ims.util.JwtUtil;
 
 import java.util.stream.Collectors;
 
-@Controller
+@RestController
 public class AuthenticationController {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    private final TokenProvider tokenProvider;
 
-    @Autowired
-    private CustomUserDetailsService userDetailsService;
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
-    @Autowired
-    private JwtUtil jwtUtil;
+    public AuthenticationController(TokenProvider tokenProvider, AuthenticationManagerBuilder authenticationManagerBuilder) {
+        this.tokenProvider = tokenProvider;
+        this.authenticationManagerBuilder = authenticationManagerBuilder;
+    }
 
     @PostMapping("/authenticate")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest req) {
 
-//        try {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(req.getUsername(), req.getPassword())
-        );
-//        } catch (AuthenticationException e) {
-//            return new ResponseEntity<>("User not found", HttpStatus.UNAUTHORIZED);
-//        }
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(req.getUsername(), req.getPassword());
 
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        String token = jwtUtil.generateToken(authentication);
+
+        String jwt = tokenProvider.createToken(authentication, false);
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + jwt);
 
         return ResponseEntity.ok(
                 new AuthenticationResponse(
                         authentication.getName(),
-                        token,
+                        jwt,
                         authentication.getAuthorities()
                                 .stream()
                                 .map(GrantedAuthority::getAuthority)
