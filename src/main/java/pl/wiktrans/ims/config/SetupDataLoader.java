@@ -84,7 +84,6 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         user.setPassword(passwordEncoder.encode("testtest"));
         user.setEmail("test@test.com");
         user.setRoles(Sets.newHashSet(adminRole.get(), userRole.get(), traderSupervisorRole.get()));
-//        user.setRoles(Collections.singleton(userRole.get()));
         user.setEnabled(true);
         userRepository.save(user);
 
@@ -264,7 +263,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 
         Product product4 = new Product();
         product4.setCode(963586L);
-        product4.setName("Karmnik drewno");
+        product4.setName("Karmnik sosna");
         product4.setHeight(20D);
         product4.setWidth(20d);
         product4.setDepth(15d);
