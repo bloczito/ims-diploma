@@ -46,6 +46,7 @@ public class CustomerService {
         customer.setNip(dto.getNip());
         customer.setPhone(dto.getPhone());
         customer.setAddress(dto.getAddress());
+        customerRepository.save(customer);
 
         dto.getCustomerObjects().forEach(dtoObject -> {
             if (dtoObject.getId() != null) {

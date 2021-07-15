@@ -1,4 +1,4 @@
-package pl.wiktrans.ims.config;
+package pl.wiktrans.ims.dto;
 
 import lombok.Data;
 
